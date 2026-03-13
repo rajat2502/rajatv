@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getBlogPost, getBlogPosts } from "@/lib/blog";
 
-export const revalidate = 3600;
+export const dynamic = "force-static";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();

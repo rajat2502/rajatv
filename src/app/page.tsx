@@ -3,7 +3,7 @@ import { SITE, EXPERIENCES, PROJECTS } from "@/lib/constants";
 import { getBlogPosts } from "@/lib/blog";
 import Link from "next/link";
 
-export const revalidate = 3600;
+export const dynamic = "force-static";
 
 export default async function Home() {
   const posts = await getBlogPosts();
