@@ -1,65 +1,132 @@
-import Image from "next/image";
+import { Github, Linkedin, Mail } from "lucide-react";
+import { SITE, EXPERIENCES, PROJECTS } from "@/lib/constants";
+import { getBlogPosts } from "@/lib/blog";
+import Link from "next/link";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export default async function Home() {
+  const posts = await getBlogPosts();
+  const latestPosts = posts.slice(0, 3);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <div className="space-y-16">
+      {/* Hero */}
+      <section className="animate-fade-in-up stagger-1">
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          {SITE.name}
+        </h1>
+        <p className="mt-4 text-neutral-600 dark:text-neutral-400">{SITE.description}</p>
+        <div className="mt-4 flex items-center gap-4">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={SITE.github}
             target="_blank"
             rel="noopener noreferrer"
+            className="text-neutral-500 transition-all duration-200 hover:text-emerald-accent hover:scale-110"
+            aria-label="GitHub"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            <Github size={18} />
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={SITE.linkedin}
             target="_blank"
             rel="noopener noreferrer"
+            className="text-neutral-500 transition-all duration-200 hover:text-emerald-accent hover:scale-110"
+            aria-label="LinkedIn"
           >
-            Documentation
+            <Linkedin size={18} />
+          </a>
+          <a
+            href={`mailto:${SITE.email}`}
+            className="text-neutral-500 transition-all duration-200 hover:text-emerald-accent hover:scale-110"
+            aria-label="Email"
+          >
+            <Mail size={18} />
           </a>
         </div>
-      </main>
+      </section>
+
+      {/* Experience */}
+      <section>
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Experience</h2>
+          <Link
+            href="/experience"
+            data-sound="nav"
+            className="text-sm text-emerald-accent hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="mt-4 space-y-1">
+          {EXPERIENCES.map((exp) => (
+            <div key={exp.company} className="hover-row flex flex-col justify-between sm:flex-row sm:items-baseline">
+              <div>
+                <span className="text-neutral-900 dark:text-neutral-100">{exp.company}</span>
+                <span className="ml-2 text-sm text-neutral-500">{exp.role}</span>
+              </div>
+              <span className="text-sm text-neutral-500">{exp.period}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Projects */}
+      <section>
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Projects</h2>
+          <Link
+            href="/projects"
+            data-sound="nav"
+            className="text-sm text-emerald-accent hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="mt-4 space-y-1">
+          {PROJECTS.slice(0, 4).map((project) => (
+            <div key={project.title} className="hover-row">
+              <span className="text-neutral-900 dark:text-neutral-100">{project.title}</span>
+              <span className="ml-2 text-sm text-neutral-500">
+                {project.tech.join(" · ")}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Writing */}
+      {latestPosts.length > 0 && (
+        <section>
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Writing</h2>
+            <Link
+              href="/blog"
+              data-sound="nav"
+              className="text-sm text-emerald-accent hover:underline"
+            >
+              View all
+            </Link>
+          </div>
+          <div className="mt-4 space-y-1">
+            {latestPosts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                data-sound="item"
+                className="hover-row block"
+              >
+                <div className="flex flex-col justify-between sm:flex-row sm:items-baseline">
+                  <span className="text-neutral-900 dark:text-neutral-100">
+                    {post.title}
+                  </span>
+                  <span className="shrink-0 text-sm text-neutral-500">{post.date}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
